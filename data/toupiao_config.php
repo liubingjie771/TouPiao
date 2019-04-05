@@ -44,8 +44,8 @@ $istb[14]="insert into tp_mlst values(1002,'选项十','74',0,null)";
 *******************************************************************************************************************************************/
 $istb[15]="drop table tp_users";
 $istb[16]="create table tp_users(tpu_id int unique,tpu_name varchar(100) not null,tpu_alias varchar(200) not null,tpu_pass varchar(100) not null,tpu_admin bool  not null,tpu_tel varchar(12) not null,tpu_mail varchar(100) not null,tpu_bakinfo varchar(1000))";
-$istb[17]="insert into tp_users values(9000,'admin','投票管理员1','".sha1("891021")."',1,'18562221224','liubingjie771@live.cn',null)";
-$istb[18]="insert into tp_users values(9001,'liubingjie771','投票管理员2','".sha1("lbj*891021")."',1,'18562221224','liubingjie771@live.cn',null)";
+$istb[17]="insert into tp_users values(9000,'admin','投票管理员1','".sha1("123456")."',1,'18562221224','liubingjie771@live.cn',null)";
+$istb[18]="insert into tp_users values(9001,'liubingjie771','投票管理员2','".sha1("891021")."',1,'18562221224','liubingjie771@live.cn',null)";
 $istb[19]="insert into tp_users values(9002,'guest','临时访问者','".sha1("123")."',1,'18562221224','liubingjie771@live.cn',null)";
 
 for($i=0;$i<count($istb);$i++)
