@@ -2,10 +2,17 @@
 <html>
 <head>
 <meta charset="UTF-8" />
+<meta version="<?php include("version.inc"); ?>" />
 <title>删除投票项目</title>
 </head>
 <body>
 <?php
+
+if($_COOKIE["tp_loginuser"]!="admin")
+{
+		echo "<script>window.alert('用户无权删除！');history.go(-1);</script>";
+		exit(0);
+}
 function alerr($a,$b)
 {
 	//$a弹出：错误信息

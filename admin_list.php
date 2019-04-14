@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
+<meta version="<?php include("version.inc"); ?>" />
 <title>投票管理列表界面</title>
 <base target="_blank" />
 <script language="javascript">
@@ -16,6 +17,12 @@ function delkao(s)
 <body>
 <center>
 <?php
+//注册时使用的REGID信息
+$regid="ABC"."B60E0DDC080B9591F8FD422BF8C03B4A70C42625"."DEF";
+if($_COOKIE["tp_regid"]!=$regid)
+{
+	echo "<script>window.alert('REGID号有问题，请联系管理员！');location.href='user.php';</script>";
+}
 function alerr($a,$b)
 {
 	//$a弹出：错误信息
@@ -51,17 +58,17 @@ $mlinfo=$db->query("select * from tp_mulu");
 echo "<table border='1' cellspacing='0' cellpadding='0' width='100%'>";
 echo <<<THEAD
 	<tr>
-		<td>投票ID号</td>
-		<td>投票标题</td>
-		<td>投票开始日期</td>
-		<td>投票结束日期</td>
-		<td>最小选择项目数</td>
-		<td>最大选择项目数</td>
-		<td>投票发布者</td>
-		<td>投票发布日期</td>
-		<td>投票备注信息</td>
-		<td>项目总数</td>
-		<td>操作</td>
+		<th>投票<br/>ID号</th>
+		<th>投票标题</th>
+		<th>投票开始日期</th>
+		<th>投票结束日期</th>
+		<th>最小选择<br/>项目数</th>
+		<th>最大选择<br/>项目数</th>
+		<th>投票发布者</th>
+		<th>投票发布日期</th>
+		<th>结果查看<br/>截止日期</th>
+		<th>项目总数</th>
+		<th>操作</th>
 	</tr>
 THEAD;
 while($mulu=$mlinfo->fetchArray())
@@ -75,16 +82,14 @@ while($mulu=$mlinfo->fetchArray())
 	echo "<td>".$mulu["tp_max"]."</td>";
 	echo "<td>".$mulu["tp_cuser"]."</td>";
 	echo "<td>".$mulu["tp_ctime"]."</td>";
-	echo "<td>".$mulu["tp_bakinfo"]."</td>";
-	$xms1=$db->query("select count(*) from tp_mlst where tp_id=".$mulu["tp_id"]);
-	$xms2=$xms1->fetchArray();
-	echo "<td>".$xms2[0]."</td>";
+	echo "<td>".$mulu["tp_view_stop"]."</td>";
+	echo "<td>".$mulu["tp_znum"]."</td>";
 	echo "<td align='center'>";
-	if($mulu["tp_start"]<=date("Y-m-d")&&$mulu["tp_end"]>=date("Y-m-d"))
+	if(strtotime($mulu["tp_start"])<=strtotime(date("Y-m-d H:i:s"))&&strtotime($mulu["tp_end"])>=strtotime(date("Y-m-d H:i:s")))
 		echo "<a href='index.php?tp_id=".$mulu["tp_id"]."'>开始投票</a>";
-	elseif($mulu["tp_start"]>date("Y-m-d"))
+	elseif(strtotime($mulu["tp_start"])>strtotime(date("Y-m-d H:i:s")))
 		echo "投票未开";
-	elseif($mulu["tp_end"]<date("Y-m-d"))
+	elseif(strtotime($mulu["tp_end"])<strtotime(date("Y-m-d H:i:s")))
 		echo "投票已关";
 	echo "&nbsp;&nbsp;<a href='laster.php?tp_id=".$mulu["tp_id"]."'>结果</a>&nbsp;&nbsp;<a href=\"javascript:delkao('".$mulu["tp_id"]."');\">删除</a></td>";
 	echo "</tr>";
@@ -94,6 +99,6 @@ echo "</table>";
 </fieldset>
 <button onclick="location.href='create.php';">创建投票信息</button>
 </center>
-<iframe style="position:fixed;left:0px;width:100%;bottom:0px;height:200px;" src="http://lyclub.f3322.net:82/quan_ping_liu_yan/index.php?url=<?php echo "http://".$_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"]; ?>" ></iframe>
+<!--iframe style="position:fixed;left:0px;width:100%;bottom:0px;height:200px;" src="http://lyclub.f3322.net:82/quan_ping_liu_yan/index.php?url=<?php echo "http://".$_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"]; ?>" ></iframe-->
 </body>
 </html>

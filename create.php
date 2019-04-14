@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<meta version="1.0" />
+<meta version="<?php include("version.inc"); ?>" />
 <title>创建投票栏目</title>
 <?php
 	ini_set('display_errors',0);            //错误信息1
@@ -74,7 +74,7 @@ function del(e) {
 <body>
 <center>
 <fieldset style="padding:8px;margin-left:300px;margin-right:300px;border:1px solid green;">
-<legend align="center"><font style="font-size:50px;font-family:黑体;font-weight:bold;color:blue;">新建投票</font></legend>
+<legend align="center"><font style="font-size:40px;font-family:黑体;font-weight:bold;color:blue;font-weight:bold;">新&nbsp;建&nbsp;投&nbsp;票</font></legend>
 <?php
 //$_COOKIE["tp_loginuser"]="liubingjie771";
 //$_COOKIE["tp_loginname"]="刘星云";
@@ -85,8 +85,8 @@ if($_GET["yn"]=="0")
 		<form id="tpc" name="tpc" action="?yn=1" method="post">
 		<table border="1" width="100%" cellpadding="2" cellspacing="0">
 		<tr>
-			<th width="20%">开始时间：</th><td width="30%"><input type="date" name="tp_start" id="tp_start" value="" placeholder="如：2019-01-03"/></td>
-			<th width="20%">结束时间：</th><td width="30%"><input type="date" name="tp_end" id="tp_end" value="" placeholder="如：2019-01-03"/></td>
+			<th width="20%">开始时间：</th><td width="30%"><input type="date" name="tp_start_date" id="tp_start_date" value="" placeholder="如：2019-01-03"/><input type="time" name="tp_start_time" id="tp_start_time" value="" placeholder="如：12:12:12"/></td>
+			<th width="20%">结束时间：</th><td width="30%"><input type="date" name="tp_end_date" id="tp_end_date" value="" placeholder="如：2019-01-03"/><input type="time" name="tp_end_time" id="tp_end_time" value="" placeholder="如：12:12:12"/></td>
 		</tr>
 		<tr>
 			<th>投票标题：</th><td colspan='3'><input type="text" id="tp_title" name="tp_title" size="70" /></td>
@@ -101,8 +101,8 @@ if($_GET["yn"]=="0")
 			<li><input type="text" name="tp_can[]" id="tp_can" size="75" /><input type="button" onClick='del(this);' value="删除" /></li>
 			<li><input type="text" name="tp_can[]" id="tp_can" size="75" /><input type="button" onClick='del(this);' value="删除" /></li>
 		</ul></td></tr>
+		<tr><th>投票验证码：</th><td><input type="text" id="tp_yzm" name="tp_yzm" value="" /></td><th>看结果截止日期：</th><td><input type="date" name="tp_stop_date" id="tp_stop_date" value="" placeholder="如：2019-01-03"/><input type="time" name="tp_stop_time" id="tp_stop_time" value="" placeholder="如：12:12:12"/></td></tr>
 TOUPIAOFORM1;
-
 		echo "<tr><td colspan=\"4\" align=\"center\"><input type=\"submit\" value=\"生成投票\" /><span style=\"float:left;font-size:4px;font-weight:tiny;line-height:24px;color:lightgray;\">&trade;lyclub2016&trade;</span><span style=\"float:right;font-size:4px;font-weight:tiny;line-height:24px;color:lightgray;\">&copy;发布者：".$_COOKIE["tp_loginname"]."&copy;</span></td></tr>";
 echo <<<TOUPIAOFORM2
 		</table>
@@ -115,10 +115,12 @@ elseif($_GET["yn"]=="1")
 	//echo "<h1 style='color:red'>生成投票失败！正在建设此功能……</h1>";
 	
 	$yu_tp_title=$_POST["tp_title"];
-	$yu_tp_start=$_POST["tp_start"];
-	$yu_tp_end=$_POST["tp_end"];
+	$yu_tp_start=$_POST["tp_start_date"]." ".$_POST["tp_start_time"].":00";
+	$yu_tp_end=$_POST["tp_end_date"]." ".$_POST["tp_end_time"].":00";
+	$yu_tp_stop=$_POST["tp_stop_date"]." ".$_POST["tp_stop_time"].":00";
 	$yu_tp_min=$_POST["tp_min"];
 	$yu_tp_max=$_POST["tp_max"];
+	$yu_tp_yzm=$_POST["tp_yzm"];
 	$yu_tp_cuser=$_COOKIE["tp_loginname"];
 	$yu_tp_ctime=date("Y-m-d H:i:s");
 	$yu_tp_bakinfo="";
@@ -150,10 +152,11 @@ elseif($_GET["yn"]=="1")
 	{
 		alerr("查询投票目录ID号失败3!",1);
 	}
-	elseif($db->exec("insert into tp_mulu values(".$mdn.",'".$yu_tp_title."','".$yu_tp_start."','".$yu_tp_end."',".$yu_tp_min.",".$yu_tp_max.",'".$yu_tp_cuser."','".$yu_tp_ctime."',null)"))
+	elseif($db->exec("insert into tp_mulu values(".$mdn.",'".$yu_tp_title."','".$yu_tp_start."','".$yu_tp_end."',".$yu_tp_min.",".$yu_tp_max.",'".$yu_tp_stop."','".sha1($yu_tp_yzm)."',0,'".$yu_tp_cuser."','".$yu_tp_ctime."',null)"))
 	{
 		if(addcan($mdn,$yu_tp_options,$db))
 		{
+			$isql="insert into tp_mulu values(".$mdn.",'".$yu_tp_title."','".$yu_tp_start."','".$yu_tp_end."',".$yu_tp_min.",".$yu_tp_max.",'".$yu_tp_stop."','".sha1($yu_tp_yzm)."',0,'".$yu_tp_cuser."','".$yu_tp_ctime."',null)";
 			alerr("创建投票信息成功！",2);
 		}
 		else
@@ -174,6 +177,6 @@ elseif($_GET["yn"]==null)
 ?>
 </fieldset>
 </center>
-<iframe style="position:fixed;left:0px;width:100%;bottom:0px;height:200px;" src="http://lyclub.f3322.net:82/quan_ping_liu_yan/index.php?url=<?php echo "http://".$_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"]; ?>" ></iframe>
+<!--iframe style="position:fixed;left:0px;width:100%;bottom:0px;height:200px;" src="http://lyclub.f3322.net:82/quan_ping_liu_yan/index.php?url=<?php echo "http://".$_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"]; ?>" ></iframe-->
 </body>
 </html>
